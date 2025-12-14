@@ -1,0 +1,47 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Laravel specific
+/vendor
+/storage/*.key
+/storage/logs/*.log
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Testing
+/tests/Coverage
+.phpunit.cache
+
+# Documentation
+/docs
+README.md
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
