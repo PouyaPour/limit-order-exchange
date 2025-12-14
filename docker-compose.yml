@@ -1,0 +1,145 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    container_name: exchange_backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./backend:/var/www/html
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - exchange_net
+
+  reverb:
+    build:
+      context: ./backend
+      dockerfile: ../docker/reverb/Dockerfile
+    container_name: exchange_reverb
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "9000:8080"
+    volumes:
+      - ./backend:/var/www/html
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - exchange_net
+
+  queue:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    container_name: exchange_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    command: php artisan queue:work --tries=3 --timeout=90
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - exchange_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+      target: development
+    container_name: exchange_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - VITE_REVERB_APP_KEY=exchange_key
+      - VITE_REVERB_HOST=localhost
+      - VITE_REVERB_PORT=9000
+      - VITE_REVERB_SCHEME=http
+    networks:
+      - exchange_net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: exchange_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=exchange_db
+      - POSTGRES_USER=exchange_user
+      - POSTGRES_PASSWORD=exchange_password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - exchange_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exchange_user -d exchange_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: exchange_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - exchange_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  redis_commander:
+    image: rediscommander/redis-commander:latest
+    container_name: exchange_redis_commander
+    restart: unless-stopped
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - exchange_net
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  exchange_net:
+    driver: bridge
