@@ -43,14 +43,13 @@ services:
 
   queue:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend/Dockerfile
+      context: .
+      dockerfile: docker/queue/Dockerfile
     container_name: exchange_queue
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - ./backend:/var/www/html
-    command: php artisan queue:work --tries=3 --timeout=90
     env_file:
       - ./backend/.env
     depends_on:
