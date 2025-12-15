@@ -15,4 +15,22 @@ enum OrderSideEnum: string
             self::SELL => __('enum.order_side.sell')
         };
     }
+
+    public function opposite(): self
+    {
+        return match($this) {
+            self::BUY => self::SELL,
+            self::SELL => self::BUY,
+        };
+    }
+
+    public function isBuy(): bool
+    {
+        return $this === self::BUY;
+    }
+
+    public function isSell(): bool
+    {
+        return $this === self::SELL;
+    }
 }

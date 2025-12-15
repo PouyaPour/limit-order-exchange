@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SymbolEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class Trade extends Model
     protected function casts(): array
     {
         return [
+            'symbol' => SymbolEnum::class,
             'price' => 'decimal:8',
             'amount' => 'decimal:8',
             'total_value' => 'decimal:8',
@@ -32,12 +34,12 @@ class Trade extends Model
         ];
     }
 
-    public function BuyOrder(): BelongsTo
+    public function buyOrder(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'buy_order_id');
     }
 
-    public function SellOrder(): BelongsTo
+    public function sellOrder(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'sell_order_id');
     }

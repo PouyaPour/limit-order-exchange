@@ -17,4 +17,14 @@ enum OrderStatusEnum: int
             self::CANCELLED => __('enum.order_status.' . self::CANCELLED->value),
         };
     }
+
+    public function isOpen(): bool
+    {
+        return $this === self::OPEN;
+    }
+
+    public function isFilled(): bool
+    {
+        return $this === self::FILLED;
+    }
 }
