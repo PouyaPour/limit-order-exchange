@@ -25,7 +25,7 @@ A production-oriented limit-order exchange engine with Laravel REST API and Vue 
 
 ### Prerequisites
 - Docker Desktop 4.x+ or Docker Engine with compose v2
-- Ports: 5173 (frontend), 8080 (API), 8081 (WebSocket), 5432 (DB)
+- Ports: 5173 (frontend), 8080 (API), 9000 (WebSocket), 5432 (DB)
 
 ### Setup (5 minutes)
 
