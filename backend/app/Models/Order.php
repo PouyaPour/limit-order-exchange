@@ -54,4 +54,9 @@ class Order extends Model
     {
         return $this->side->isSell();
     }
+
+    public function getTotalValue(): string
+    {
+        return bcmul($this->price, $this->amount, 8);
+    }
 }

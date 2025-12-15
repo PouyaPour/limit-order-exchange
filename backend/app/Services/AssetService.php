@@ -54,9 +54,4 @@ class AssetService
         $asset->locked_amount = bcsub($asset->locked_amount, $amount, 8);
         $asset->save();
     }
-
-    public function getTotalAmount(Asset $asset): string
-    {
-        return bcadd($asset->amount, $asset->locked_amount, 8);
-    }
 }

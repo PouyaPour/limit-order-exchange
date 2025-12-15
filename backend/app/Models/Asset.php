@@ -31,4 +31,9 @@ class Asset extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getTotalAmount(): string
+    {
+        return bcadd($this->amount, $this->locked_amount, 8);
+    }
 }
