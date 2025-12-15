@@ -24,9 +24,14 @@ return new class extends Migration
             $table->index('created_at');
         });
 
-        DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_price_positive CHECK (price > 0)');
-        DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_amount_positive CHECK (amount > 0)');
-        DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_locked_balance_positive CHECK (locked_balance >= 0)');
+        $driver = DB::getDriverName();
+        if ($driver !== 'sqlite') {
+            DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_price_positive CHECK (price > 0)');
+            DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_amount_positive CHECK (amount > 0)');
+            DB::statement(
+                'ALTER TABLE orders ADD CONSTRAINT orders_locked_balance_positive CHECK (locked_balance >= 0)'
+            );
+        }
     }
 
     public function down(): void

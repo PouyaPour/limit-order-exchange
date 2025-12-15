@@ -19,8 +19,11 @@ return new class extends Migration
             $table->unique(['user_id', 'symbol']);
         });
 
-        DB::statement('ALTER TABLE assets ADD CONSTRAINT assets_amount_positive CHECK (amount >= 0)');
-        DB::statement('ALTER TABLE assets ADD CONSTRAINT assets_locked_amount_positive CHECK (locked_amount >= 0)');
+        $driver = DB::getDriverName();
+        if ($driver !== 'sqlite') {
+            DB::statement('ALTER TABLE assets ADD CONSTRAINT assets_amount_positive CHECK (amount >= 0)');
+            DB::statement('ALTER TABLE assets ADD CONSTRAINT assets_locked_amount_positive CHECK (locked_amount >= 0)');
+        }
     }
 
     public function down(): void

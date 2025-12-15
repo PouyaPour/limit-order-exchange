@@ -23,10 +23,13 @@ return new class extends Migration
             $table->index(['symbol', 'executed_at']);
         });
 
-        DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_price_positive CHECK (price > 0)');
-        DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_amount_positive CHECK (amount > 0)');
-        DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_total_value_positive CHECK (total_value > 0)');
-        DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_commission_positive CHECK (commission >= 0)');
+        $driver = DB::getDriverName();
+        if ($driver !== 'sqlite') {
+            DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_price_positive CHECK (price > 0)');
+            DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_amount_positive CHECK (amount > 0)');
+            DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_total_value_positive CHECK (total_value > 0)');
+            DB::statement('ALTER TABLE trades ADD CONSTRAINT trades_commission_positive CHECK (commission >= 0)');
+        }
     }
 
     public function down(): void
