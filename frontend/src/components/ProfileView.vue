@@ -11,7 +11,6 @@ onMounted(() => {
   if (userId) {
     window.Echo.private(`user.${userId}`)
         .listen('.order.matched', (e: any) => {
-          console.log('Order matched → updating balance & assets locally')
           profileStore.updateFromMatch(e)
         })
   }

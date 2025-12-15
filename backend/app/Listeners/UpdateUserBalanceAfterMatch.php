@@ -37,7 +37,9 @@ class UpdateUserBalanceAfterMatch implements ShouldQueue
 
             broadcast(new BalanceUpdated($userId, $balances));
 
-            Log::info('Balance updated after match', [
+            broadcast(new BalanceUpdated($userId, $balances->resolve()));
+
+            Log::info('Balance updated after match - broadcast complete', [
                 'user_id' => $userId,
                 'trade_id' => $trade->id,
             ]);

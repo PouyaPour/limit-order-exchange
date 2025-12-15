@@ -27,6 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
     async function logout() {
         await api.post('/logout')
         clearAuth()
+
+        if (window.Echo) {
+            window.Echo.disconnect()
+        }
     }
 
     async function fetchProfile() {
@@ -41,6 +45,11 @@ export const useAuthStore = defineStore('auth', () => {
         isAuthenticated.value = true
         localStorage.setItem('auth_token', authToken)
         localStorage.setItem('user_id', String(userData.id))
+
+        if (window.Echo?.connector?.pusher) {
+            window.Echo.connector.pusher.config.auth.headers.Authorization =
+                `Bearer ${authToken}`
+        }
     }
 
     function clearAuth() {

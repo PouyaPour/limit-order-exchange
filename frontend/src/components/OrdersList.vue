@@ -53,15 +53,30 @@ onMounted(() => {
   if (userId) {
     window.Echo.private(`user.${userId}`)
         .listen('.order.matched', (e: any) => {
-          console.log('Order matched → updating locally')
 
-          if (e.order_id) {
-            orderStore.updateOrderStatus(e.order_id, 2)
+          if (e.trade?.user_order_id) {
+            orderStore.updateOrderStatus(e.trade.user_order_id, 2)
+            toast?.success(e.message || 'Order filled successfully!')
           }
 
           profileStore.updateFromMatch(e)
-
-          toast?.success('Order filled successfully!')
+        })
+        .listen('.balance.updated', (e: any) => {
+          if (e.balances) {
+            profileStore.setBalances(e.balances)
+          }
+        })
+        .listen('.order.cancelled', (e: any) => {
+          if (e.order?.id) {
+            orderStore.updateOrderStatus(e.order.id, 3)
+            toast?.info(e.message || 'Order cancelled')
+          }
+        })
+        .listen('.order.created', (e: any) => {
+          if (e.order) {
+            orderStore.addOrder(e.order)
+            toast?.success('New order created!')
+          }
         })
   }
 })

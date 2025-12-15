@@ -29,7 +29,7 @@ class AuthController extends Controller
             'balance' => '10000.00000000',
         ]);
 
-        $user->asset()->create([
+        $user->assets()->create([
             'symbol' => SymbolEnum::BTC->value,
             'amount' => '10000.00000000',
         ]);

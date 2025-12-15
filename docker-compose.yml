@@ -1,33 +1,13 @@
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend/Dockerfile
+      context: .
+      dockerfile: docker/backend/Dockerfile
     container_name: exchange_backend
     restart: unless-stopped
     working_dir: /var/www/html
     ports:
       - "8080:8000"
-    volumes:
-      - ./backend:/var/www/html
-    env_file:
-      - ./backend/.env
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - exchange_net
-
-  reverb:
-    build:
-      context: ./backend
-      dockerfile: ../docker/reverb/Dockerfile
-    container_name: exchange_reverb
-    restart: unless-stopped
-    working_dir: /var/www/html
-    ports:
       - "9000:8080"
     volumes:
       - ./backend:/var/www/html

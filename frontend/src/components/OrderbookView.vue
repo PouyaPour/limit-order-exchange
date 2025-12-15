@@ -29,11 +29,26 @@ function setupWebSocket() {
   window.Echo.leave(`orderbook.${selectedSymbol.value}`)
 
   window.Echo.channel(`orderbook.${selectedSymbol.value}`)
-      .listen('.orderbook.updated', (e) => {
-        console.log('Orderbook updated:', e)
-        orderbook.value = e.orderbook
+      .listen('.orderbook.updated', (e: any) => {
+        if (e.orderbook) {
+          orderbook.value = e.orderbook
+        }
+      })
+      .listen('.order.created', (e: any) => {
+        loadOrderbook()
+      })
+      .listen('.order.cancelled', (e: any) => {
+        loadOrderbook()
       })
 }
+
+watch(selectedSymbol, () => {
+  const oldSymbol = selectedSymbol.value === 'BTC' ? 'ETH' : 'BTC'
+  window.Echo.leave(`orderbook.${oldSymbol}`)
+
+  loadOrderbook()
+  setupWebSocket()
+})
 
 onMounted(() => {
   loadOrderbook()

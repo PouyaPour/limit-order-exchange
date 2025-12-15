@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -18,4 +19,6 @@ Route::middleware(['auth:sanctum', 'abilities:FULL_ACCESS'])->group(function () 
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel']);
 
     Route::get('/orders/orderbook', [OrderController::class, 'orderbook']);
+
+    Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate']);
 });
